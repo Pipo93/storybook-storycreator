@@ -1,0 +1,22 @@
+{
+    "requiredProps": {
+        "children": {
+            "description": "Number shown inside the badge",
+            "type": "number"
+        },
+        "type": {
+            "description": "The type refers to the backgroundColor of the badge",
+            "enum": [
+                "black",
+                "red"
+            ],
+            "type": "string"
+        }
+    },
+    "optionalProps": {
+        "testID": {
+            "description": "testID e.g. to be used with Detox or @testing-library/react",
+            "type": "string"
+        }
+    }
+}

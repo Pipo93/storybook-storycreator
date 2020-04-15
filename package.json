@@ -1,0 +1,76 @@
+{
+  "name": "@pipo93/storybook-storycreator",
+  "version": "0.0.1",
+  "description": "Package for creating nice looking storybook documentationsfor react native as well as react components.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "Philip Lenhart<dev@philiplenhart.de>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "lint": "./checkPeers.js && yarn type-check && eslint \"*/**/*.{js,ts,tsx}\" --max-warnings=0",
+    "link:show": "( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l",
+    "pretty": "prettier --config .prettierrc --write \"./**/*.{ts,tsx}\"",
+    "type-check": "tsc -p tsconfig.storybook.json --noEmit",
+    "type-check:watch": "yarn type-check -- --watch",
+    "build": "rm -rf ./lib && yarn build:types && yarn build:js",
+    "build:watch": "yarn build:types && yarn build:js --watch",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir lib --ignore \"/**/*.spec.tsx,/**/*.spec.ts\" --extensions \".ts,.tsx\" --source-maps inline",
+    "storybook": "start-storybook -c ./storybook/web",
+    "prestorybook": "rnstl",
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios"
+  },
+  "dependencies": {
+    "@pipo93/react-native-markdown": "^0.0.7"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-react": "^7.9.4",
+    "@babel/preset-typescript": "^7.9.0",
+    "@react-native-community/async-storage": "^1.9.0",
+    "@storybook/react": "^5.3.18",
+    "@storybook/react-native": "^5.3.18",
+    "@types/react-native": "^0.62.0",
+    "@typescript-eslint/eslint-plugin": "^2.25.0",
+    "@typescript-eslint/parser": "^2.19.2",
+    "babel-loader": "^8.1.0",
+    "babel-preset-react-app": "^9.1.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react-hooks": "^3.0.0",
+    "expo": "^37.0.7",
+    "expo-updates": "^0.1.2",
+    "metro-react-native-babel-preset": "^0.59.0",
+    "prettier": "^2.0.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-native": "^0.62.0",
+    "react-native-storybook-loader": "^1.8.1",
+    "react-native-unimodules": "^0.9.0",
+    "react-native-web": "^0.12.2",
+    "typescript": "^3.8.3"
+  },
+  "peerDependencies": {
+    "@storybook/react": "^5.3.18",
+    "@storybook/react-native": "^5.3.18",
+    "react": "^16.13.1",
+    "react-native": "^0.62.0",
+    "react-native-web": "^0.12.2"
+  },
+  "config": {
+    "react-native-storybook-loader": {
+      "searchDir": [
+        "./examples"
+      ],
+      "pattern": "**/*.stories.{ts,tsx}",
+      "outputFile": "./storybook/utils/storyLoader/index.js"
+    }
+  }
+}

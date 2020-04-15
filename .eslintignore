@@ -1,0 +1,8 @@
+lib
+ios
+android
+node_modules
+coverage
+**/__snapshots__/
+storybook-static
+storybook/utils/storyLoader/index.js
