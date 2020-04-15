@@ -1,7 +1,7 @@
 {
   "name": "@pipo93/storybook-storycreator",
   "version": "0.0.1",
-  "description": "Package for creating nice looking storybook documentationsfor react native as well as react components.",
+  "description": "Package for creating nice looking storybook documentations for react native as well as react components.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "author": "Philip Lenhart<dev@philiplenhart.de>",
