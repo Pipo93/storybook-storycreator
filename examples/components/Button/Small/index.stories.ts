@@ -5,7 +5,7 @@ import { examples } from './docs/examples'
 import SmallButton, { SmallButtonProps } from '.'
 
 const smallButtonConfig: ComponentStoryConfig<SmallButtonProps> = {
-    // createIssueLink: '',
+    createIssueLink: 'https://github.com/Pipo93/storybook-storycreator/issues/new',
     componentImportPath: '@pipo93/react-styleguide',
     tabs: [
         {
@@ -16,7 +16,7 @@ const smallButtonConfig: ComponentStoryConfig<SmallButtonProps> = {
         { type: 'PLAYGROUND', sections: [] },
     ],
     title: 'Small Button',
-    // sourceLink: '',
+    sourceLink: 'https://github.com/Pipo93/storybook-storycreator/blob/master/examples/components/Button/Small/index.tsx',
     component: SmallButton,
     headerComponentProps: {
         children: 'Button',

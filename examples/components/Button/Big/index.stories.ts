@@ -5,7 +5,7 @@ import { examples } from './docs/examples'
 import BigButton, { BigButtonProps } from '.'
 
 const bigButtonConfig: ComponentStoryConfig<BigButtonProps> = {
-    // createIssueLink: '',
+    createIssueLink: 'https://github.com/Pipo93/storybook-storycreator/issues/new',
     componentImportPath: '@pipo93/react-styleguide',
     tabs: [
         {
@@ -16,7 +16,7 @@ const bigButtonConfig: ComponentStoryConfig<BigButtonProps> = {
         { type: 'PLAYGROUND', sections: [] },
     ],
     title: 'Big Button',
-    // sourceLink: '',
+    sourceLink: 'https://github.com/Pipo93/storybook-storycreator/blob/master/examples/components/Button/Big/index.tsx',
     component: BigButton,
     headerComponentProps: {
         children: 'Button',
