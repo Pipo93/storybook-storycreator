@@ -1,4 +1,4 @@
-import React, { ComponentClass, FunctionComponent, ReactElement } from 'react'
+import React, { ComponentClass, FunctionComponent, ReactElement, useState } from 'react'
 import { View, Text, ScrollView, ImageBackground } from 'react-native'
 import { ContentLayout } from '../layouts'
 import { ExampleConfig, VariantsBackground } from '../StoryCreator'
@@ -64,6 +64,8 @@ const Example = <P,>({
     variantsBackground = defaultBackground,
     component,
 }: Props<P>): ReactElement => {
+    const [variantsContainerWidth, setContainerWidth] = useState(375)
+
     const Component = component
 
     return (
@@ -77,6 +79,14 @@ const Example = <P,>({
                 <VariantBackground variantsBackground={variantsBackground}>
                     <ScrollView
                         horizontal
+                        onLayout={({ nativeEvent }): void => {
+                            if (
+                                nativeEvent.layout.width &&
+                                nativeEvent.layout.width !== variantsContainerWidth
+                            ) {
+                                setContainerWidth(nativeEvent.layout.width)
+                            }
+                        }}
                         style={{ flexGrow: 1, flexDirection: variantsDirection }}
                         showsHorizontalScrollIndicator={false}
                     >
@@ -90,6 +100,7 @@ const Example = <P,>({
                                         paddingTop:
                                             index !== 0 && variantsDirection === 'column' ? 8 : 0,
                                         flexGrow: variantsDirection === 'column' ? 1 : undefined,
+                                        maxWidth: variantsContainerWidth,
                                     }}
                                 >
                                     <Component {...props} />

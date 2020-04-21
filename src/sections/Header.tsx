@@ -9,7 +9,7 @@ export type HeaderConfig<P> = {
     sourceLink?: string
     createIssueLink?: string
     title: string
-    example: {
+    example?: {
         component: FunctionComponent<P> | ComponentClass<P>
         componentProps: P
     }
@@ -21,7 +21,8 @@ type HeaderProps<P> = {
 
 const Header = <P,>({ config }: HeaderProps<P>): ReactElement | null => {
     const { sourceLink, createIssueLink, example } = config
-    const Component = example.component
+    const Component = example?.component
+
     const { theme } = useThemeContext()
 
     return (
@@ -59,9 +60,11 @@ const Header = <P,>({ config }: HeaderProps<P>): ReactElement | null => {
                     {config.title}
                 </Text>
             </View>
-            <View>
-                <Component {...config.example.componentProps} />
-            </View>
+            {config.example && Component ? (
+                <View>
+                    <Component {...config.example?.componentProps} />
+                </View>
+            ) : null}
         </ContentLayout>
     )
 }

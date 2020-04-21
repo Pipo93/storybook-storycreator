@@ -46,7 +46,7 @@ export type ComponentStoryConfig<P> = {
     createIssueLink?: string
     title: string
     component: FunctionComponent<P> | ComponentClass<P>
-    headerComponentProps: P
+    headerComponentProps?: P
     componentImportPath: string
     componentExportName: string
     propsSchema?: PropsObject
@@ -87,10 +87,12 @@ const createStorySections = <P,>({
         sourceLink,
         createIssueLink,
         title,
-        example: {
-            component,
-            componentProps: headerComponentProps,
-        },
+        example: headerComponentProps
+            ? {
+                  component,
+                  componentProps: headerComponentProps,
+              }
+            : undefined,
     }
 
     const storyTabs = tabs.map(t => {
