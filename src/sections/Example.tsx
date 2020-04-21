@@ -1,53 +1,104 @@
 import React, { ComponentClass, FunctionComponent, ReactElement } from 'react'
-import { View, Text, ScrollView, Dimensions } from 'react-native'
+import { View, Text, ScrollView, ImageBackground } from 'react-native'
 import { ContentLayout } from '../layouts'
+import { ExampleConfig, VariantsBackground } from '../StoryCreator'
 
-type Props<P> = {
-    title: string
-    description?: string
-    exampleProps: P | P[]
+type Props<P> = ExampleConfig<P> & {
     component: FunctionComponent<P> | ComponentClass<P>
 }
 
-const Example = <P,>({ title, description, exampleProps, component }: Props<P>): ReactElement => {
+const defaultBackground: VariantsBackground = { type: 'COLOR', color: '#F0F4F7' }
+
+type VariantBackgroundProps = {
+    variantsBackground: VariantsBackground
+    children: ReactElement
+}
+
+// TODO: move to extra file
+const VariantBackground = ({
+    children,
+    variantsBackground,
+}: VariantBackgroundProps): ReactElement => {
+    if (variantsBackground.type === 'IMAGE') {
+        const { src } = variantsBackground
+        const source = typeof src === 'string' ? { uri: src } : src
+
+        return (
+            <ImageBackground
+                source={source}
+                style={{
+                    flex: 1,
+                    padding: 16,
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    backgroundColor: 'blue',
+                }}
+                resizeMode="repeat"
+            >
+                {children}
+            </ImageBackground>
+        )
+    }
+
+    // color type
+    return (
+        <View
+            style={{
+                flex: 1,
+                backgroundColor: variantsBackground.color,
+                padding: 16,
+                alignItems: 'center',
+                flexDirection: 'row',
+            }}
+        >
+            {children}
+        </View>
+    )
+}
+
+const Example = <P,>({
+    title,
+    description,
+    variants,
+    variantsDirection,
+    variantsBackground = defaultBackground,
+    component,
+}: Props<P>): ReactElement => {
     const Component = component
-    const isSmallDevice = Dimensions.get('window').width < 900
 
     return (
         <ContentLayout style={{ marginBottom: 32 }}>
-            <ScrollView horizontal style={{ flexGrow: 1 }} showsHorizontalScrollIndicator={false}>
-                <View
-                    style={{
-                        flexDirection: isSmallDevice ? 'column' : 'row',
-                    }}
-                >
-                    <View style={{ width: isSmallDevice ? '100%' : 250, marginRight: 16 }}>
-                        <Text style={{ fontSize: 18, marginBottom: 16 }}>{title}</Text>
-                        {description ? (
-                            <Text style={{ marginBottom: 16 }}>{description}</Text>
-                        ) : null}
-                    </View>
-                    <View
-                        style={{
-                            width: isSmallDevice ? '100%' : 650,
-                            backgroundColor: '#F0F4F7',
-                            padding: 16,
-                            alignItems: 'center',
-                            flexDirection: 'row',
-                        }}
+            <View style={{ flexDirection: 'column', width: '100%' }}>
+                <View style={{ flex: 1, paddingVertical: 16 }}>
+                    <Text style={{ fontSize: 18 }}>{title}</Text>
+                    {description ? <Text style={{ marginTop: 16 }}>{description}</Text> : null}
+                </View>
+
+                <VariantBackground variantsBackground={variantsBackground}>
+                    <ScrollView
+                        horizontal
+                        style={{ flexGrow: 1, flexDirection: variantsDirection }}
+                        showsHorizontalScrollIndicator={false}
                     >
-                        {Array.isArray(exampleProps) ? (
-                            exampleProps.map((props, index) => (
-                                <View key={index} style={{ paddingHorizontal: 8 }}>
+                        <View style={{ flexDirection: variantsDirection, flexGrow: 1 }}>
+                            {variants.map((props, index) => (
+                                <View
+                                    key={index}
+                                    style={{
+                                        paddingLeft:
+                                            index !== 0 && variantsDirection === 'row' ? 8 : 0,
+                                        paddingTop:
+                                            index !== 0 && variantsDirection === 'column' ? 8 : 0,
+                                        flexGrow: variantsDirection === 'column' ? 1 : undefined,
+                                    }}
+                                >
                                     <Component {...props} />
                                 </View>
-                            ))
-                        ) : (
-                            <Component {...exampleProps} />
-                        )}
-                    </View>
-                </View>
-            </ScrollView>
+                            ))}
+                        </View>
+                    </ScrollView>
+                </VariantBackground>
+            </View>
         </ContentLayout>
     )
 }

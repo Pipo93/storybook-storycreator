@@ -9,10 +9,7 @@ import PropsAPI, { PropsObject } from './sections/PropsAPI'
 import Examples from './sections/Examples'
 import storiesOf from './utils/storiesOf'
 
-type StoryConfig = {
-    title: string
-    sections: (ReactElement | null)[]
-}
+type StorySections = (ReactElement | null)[]
 
 type Section = 'HEADER' | 'IMPORT_EXAMPLE' | 'DIVIDER' | 'PROPS_API' | 'EXAMPLES'
 
@@ -21,45 +18,78 @@ type BasicTabConfig = {
     sections: Section[]
 }
 
+export type VariantsBackground =
+    | { type: 'IMAGE'; src: string | number }
+    | { type: 'COLOR'; color: string }
+
 export type ExampleConfig<P> = {
     title: string
     description?: string
-    props: P | P[]
+    variantsDirection: 'column' | 'row'
+    variantsBackground?: VariantsBackground
+    variants: P[]
 }
 
-export type BasicComponentStoryConfig<P> = {
+export enum StoryKind {
+    MARKDOWN = 'MARKDOWN',
+    COMPONENT = 'COMPONENT',
+}
+
+type BasicStoryConfig = {
+    storyPath: string
+    storyName: string
+    type: StoryKind
+}
+
+export type ComponentStoryConfig<P> = {
     sourceLink?: string
     createIssueLink?: string
-    componentImportPath: string
     title: string
-    propsSchema?: PropsObject
     component: FunctionComponent<P> | ComponentClass<P>
-    componentProps: P
-    componentPath: string
+    headerComponentProps: P
+    componentImportPath: string
     componentExportName: string
+    propsSchema?: PropsObject
     tabs: BasicTabConfig[]
     examples?: ExampleConfig<P>[]
 }
 
-const createStoryConfig = <P,>({
+type ComponentStory<P> = BasicStoryConfig & {
+    type: StoryKind.COMPONENT
+    config: ComponentStoryConfig<P>
+}
+
+export type MarkdownStoryConfig = {
+    mdContent: string
+    getImageParams?: GetImageParams
+}
+
+type MarkdownStory = BasicStoryConfig & {
+    type: StoryKind.MARKDOWN
+    config: MarkdownStoryConfig
+}
+
+type StoryType<P> = MarkdownStory | ComponentStory<P>
+
+const createStorySections = <P,>({
     componentImportPath,
     title,
     sourceLink,
     component,
-    componentProps,
+    headerComponentProps,
     componentExportName,
     tabs,
     propsSchema,
     examples,
     createIssueLink,
-}: BasicComponentStoryConfig<P>): StoryConfig => {
+}: ComponentStoryConfig<P>): StorySections => {
     const headerConfig: HeaderConfig<P> = {
         sourceLink,
         createIssueLink,
         title,
         example: {
             component,
-            componentProps,
+            componentProps: headerComponentProps,
         },
     }
 
@@ -96,76 +126,56 @@ const createStoryConfig = <P,>({
         })
     })
 
-    return {
-        title,
-        sections: [
-            <Header key={`${title}_header`} config={headerConfig} />,
-            <Divider key={`${title}_header_divider`} />,
-            <Tabs key={`${title}_tabs`} content={storyTabs} storyTitle={title} />,
-        ],
-    }
+    return [
+        <Header key={`${title}_header`} config={headerConfig} />,
+        <Divider key={`${title}_header_divider`} />,
+        <Tabs key={`${title}_tabs`} content={storyTabs} storyTitle={title} />,
+    ]
 }
 
-const getStoryName = (type: StoryTypes): string => {
-    if (type === 'COMPONENT') {
-        return 'V2 Stories / Components'
-    }
-
-    return 'Others / Unknown'
+const getStory = (storyPath: string, storyName: string, storyContent: ReactElement): void => {
+    storiesOf(storyPath, module).add(storyName, (): ReactElement => storyContent)
 }
 
-type StoryTypes = 'COMPONENT'
-
-type ComponentStory<P> = {
-    type: 'COMPONENT'
-    config: BasicComponentStoryConfig<P>
-}
-
-type StoryType<P> = ComponentStory<P>
-
-export const createStory = <P,>({ type, config }: StoryType<P>): void => {
-    const storyConfig = createStoryConfig(config)
-
-    storiesOf(getStoryName(type), module).add(
-        storyConfig.title,
-        (): ReactElement => (
+export const createStory = <P,>(storyConfig: StoryType<P>): void => {
+    const { storyPath, storyName } = storyConfig
+    let component = <></>
+    if (storyConfig.type === StoryKind.MARKDOWN) {
+        const { mdContent, getImageParams } = storyConfig.config
+        component = <MarkdownStoryComponent mdContent={mdContent} getImageParams={getImageParams} />
+    } else if (storyConfig.type === StoryKind.COMPONENT) {
+        component = (
             <ScrollView style={{ backgroundColor: '#fff' }} showsVerticalScrollIndicator={false}>
-                {storyConfig.sections}
+                {createStorySections(storyConfig.config)}
             </ScrollView>
         )
-    )
+    }
+
+    getStory(storyPath, storyName, component)
 }
 
-export type MarkdownConfig = {
-    storyPath: string
-    storyName: string
+type MarkdownStoryProps = {
     mdContent: string
     getImageParams?: GetImageParams
 }
-type CreateMarkdownStory = (config: MarkdownConfig) => void
 
-export const createMarkdownStory: CreateMarkdownStory = ({
-    storyPath,
-    storyName,
+const MarkdownStoryComponent: FunctionComponent<MarkdownStoryProps> = ({
     mdContent,
     getImageParams,
-}) => {
-    storiesOf(storyPath, module).add(
-        storyName,
-        (): ReactElement => (
-            <View style={{ flexDirection: 'row', backgroundColor: '#fff', paddingBottom: 32 }}>
-                <View style={{ width: '10%' }} />
-                <View style={{ flex: 1 }}>
-                    <ScrollView
-                        style={{ flexGrow: 1 }}
-                        showsVerticalScrollIndicator={false}
-                        showsHorizontalScrollIndicator={false}
-                    >
-                        <Markdown getImageParams={getImageParams}>{mdContent}</Markdown>
-                    </ScrollView>
-                </View>
-                <View style={{ width: '10%', flexShrink: 0 }} />
+}): ReactElement => {
+    return (
+        <View style={{ flexDirection: 'row', backgroundColor: '#fff', paddingBottom: 32 }}>
+            <View style={{ width: '10%' }} />
+            <View style={{ flex: 1 }}>
+                <ScrollView
+                    style={{ flexGrow: 1 }}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                >
+                    <Markdown getImageParams={getImageParams}>{mdContent}</Markdown>
+                </ScrollView>
             </View>
-        )
+            <View style={{ width: '10%', flexShrink: 0 }} />
+        </View>
     )
 }

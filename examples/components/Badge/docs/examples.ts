@@ -4,7 +4,7 @@ import { BadgeProps } from '..'
 export const examples: ExampleConfig<BadgeProps>[] = [
     {
         title: 'Children (number)',
-        props: [
+        variants: [
             {
                 children: 1,
                 type: 'black',
@@ -26,11 +26,12 @@ export const examples: ExampleConfig<BadgeProps>[] = [
                 type: 'black',
             },
         ],
+        variantsDirection: 'row',
     },
     {
         title: 'Type',
         description: 'black (1), red (2)',
-        props: [
+        variants: [
             {
                 children: 1,
                 type: 'black',
@@ -41,5 +42,6 @@ export const examples: ExampleConfig<BadgeProps>[] = [
                 type: 'red',
             },
         ],
+        variantsDirection: 'row',
     },
 ]

@@ -1,6 +1,6 @@
 {
   "name": "@pipo93/storybook-storycreator",
-  "version": "0.0.1",
+  "version": "0.0.1-beta.2",
   "description": "Package for creating nice looking storybook documentations for react native as well as react components.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -11,7 +11,7 @@
     "lint": "./checkPeers.js && yarn type-check && eslint \"*/**/*.{js,ts,tsx}\" --max-warnings=0",
     "link:show": "( ls -l node_modules ; ls -l node_modules/@* ) | grep ^l",
     "pretty": "prettier --config .prettierrc --write \"./**/*.{ts,tsx}\"",
-    "type-check": "tsc -p tsconfig.storybook.json --noEmit",
+    "type-check": "tsc -p tsconfig.test.json --noEmit",
     "type-check:watch": "yarn type-check -- --watch",
     "build": "rm -rf ./lib && yarn build:types && yarn build:js",
     "build:watch": "yarn build:types && yarn build:js --watch",

@@ -1,10 +1,19 @@
 import {
-    createMarkdownStory,
     createStory,
-    BasicComponentStoryConfig,
+    StoryKind,
     ExampleConfig,
+    MarkdownStoryConfig,
+    ComponentStoryConfig,
+    VariantsBackground,
 } from './StoryCreator'
+import type { ImageParams } from './types'
 
-export { createMarkdownStory, createStory }
+export { createStory, StoryKind }
 
-export type { BasicComponentStoryConfig, ExampleConfig }
+export type {
+    ComponentStoryConfig,
+    ExampleConfig,
+    ImageParams,
+    MarkdownStoryConfig,
+    VariantsBackground,
+}

@@ -1,0 +1,25 @@
+{
+    "requiredProps": {
+        "children": {
+            "description": "text shown inside of the button",
+            "type": "string"
+        }
+    },
+    "optionalProps": {
+        "onPress": {
+            "description": "callback function triggered when button is pressed",
+            "type": "function"
+        },
+        "type": {
+            "description": "The type refers to the backgroundColor of the button",
+            "defaultValue": "surface",
+            "enum": [
+                "black",
+                "white",
+                "red",
+                "green"
+            ],
+            "type": "string"
+        }
+    }
+}

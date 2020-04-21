@@ -4,6 +4,7 @@ import Markdown from '@pipo93/react-native-markdown'
 import { ContentLayout } from '../layouts'
 import { CopyToClipBoard } from '../components'
 import { FlexingView } from '../basicElements'
+import SectionHeadline from '../basicElements/SectionHeadline'
 
 type ImportExampleProps = {
     componentExportName: string
@@ -15,13 +16,14 @@ const ImportExample: FunctionComponent<ImportExampleProps> = ({
     componentImportPath,
 }) => {
     const importStatement = `import { ${componentExportName} } from '${componentImportPath}'`
-    const SOURCE = `## Import
+    const SOURCE = `
 \`\`\`js
 ${importStatement}
 \`\`\`
 `
     return (
         <ContentLayout>
+            <SectionHeadline>Import</SectionHeadline>
             <Markdown>{SOURCE}</Markdown>
             <FlexingView style={{ paddingBottom: 20 }}>
                 <CopyToClipBoard textToCopy={importStatement} />

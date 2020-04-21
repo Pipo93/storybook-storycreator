@@ -16,25 +16,25 @@ export type PropsObject = {
     optionalProps: PropsMap
 }
 
-const DUMMY_PROPS: PropsObject = {
-    requiredProps: {
-        children: {
-            description: 'Number shown inside the badge',
-            type: 'number',
-        },
-        type: {
-            description: 'The type refers to the backgroundColor of the badge',
-            enum: ['primary', 'primaryVariant', 'secondary', 'surface'],
-            type: 'string',
-        },
-    },
-    optionalProps: {
-        testID: {
-            description: 'testID e.g. to be used with Detox or @testing-library/react',
-            type: 'string',
-        },
-    },
-}
+// const DUMMY_PROPS: PropsObject = {
+//     requiredProps: {
+//         children: {
+//             description: 'Number shown inside the badge',
+//             type: 'number',
+//         },
+//         type: {
+//             description: 'The type refers to the backgroundColor of the badge',
+//             enum: ['primary', 'primaryVariant', 'secondary', 'surface'],
+//             type: 'string',
+//         },
+//     },
+//     optionalProps: {
+//         testID: {
+//             description: 'testID e.g. to be used with Detox or @testing-library/react',
+//             type: 'string',
+//         },
+//     },
+// }
 
 const HeaderCell: FunctionComponent<{ width: number }> = ({ children, width }): ReactElement => {
     return (
@@ -103,7 +103,7 @@ const PropRow: FunctionComponent<Prop> = ({
 
 const PropsAPI: FunctionComponent<{ schema: PropsObject }> = ({ schema }): ReactElement | null => {
     const requiredPropsRows = Object.keys(schema.requiredProps).map(propName => {
-        const { type, defaultValue, description, enum: propTypeEnum } = DUMMY_PROPS.requiredProps[
+        const { type, defaultValue, description, enum: propTypeEnum } = schema.requiredProps[
             propName
         ]
 
@@ -128,7 +128,7 @@ const PropsAPI: FunctionComponent<{ schema: PropsObject }> = ({ schema }): React
     })
 
     const optionalPropsRows = Object.keys(schema.optionalProps).map(propName => {
-        const { type, defaultValue, description } = DUMMY_PROPS.optionalProps[propName]
+        const { type, defaultValue, description } = schema.optionalProps[propName]
 
         return (
             <PropRow
