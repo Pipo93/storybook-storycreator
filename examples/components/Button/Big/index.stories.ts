@@ -16,7 +16,8 @@ const bigButtonConfig: ComponentStoryConfig<BigButtonProps> = {
         { type: 'PLAYGROUND', sections: [] },
     ],
     title: 'Big Button',
-    sourceLink: 'https://github.com/Pipo93/storybook-storycreator/blob/master/examples/components/Button/Big/index.tsx',
+    sourceLink:
+        'https://github.com/Pipo93/storybook-storycreator/blob/master/examples/components/Button/Big/index.tsx',
     component: BigButton,
     headerComponentProps: {
         children: 'Button',

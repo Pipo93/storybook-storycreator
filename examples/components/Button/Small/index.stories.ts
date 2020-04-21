@@ -16,7 +16,8 @@ const smallButtonConfig: ComponentStoryConfig<SmallButtonProps> = {
         { type: 'PLAYGROUND', sections: [] },
     ],
     title: 'Small Button',
-    sourceLink: 'https://github.com/Pipo93/storybook-storycreator/blob/master/examples/components/Button/Small/index.tsx',
+    sourceLink:
+        'https://github.com/Pipo93/storybook-storycreator/blob/master/examples/components/Button/Small/index.tsx',
     component: SmallButton,
     headerComponentProps: {
         children: 'Button',

@@ -8,7 +8,8 @@ const badgeConfig: ComponentStoryConfig<BadgeProps> = {
     componentImportPath: '@pipo93/react-styleguide',
     title: 'Badge',
     createIssueLink: 'https://github.com/Pipo93/storybook-storycreator/issues/new',
-    sourceLink: 'https://github.com/Pipo93/storybook-storycreator/blob/master/examples/components/Badge/index.tsx',
+    sourceLink:
+        'https://github.com/Pipo93/storybook-storycreator/blob/master/examples/components/Badge/index.tsx',
     component: Badge,
     headerComponentProps: {
         children: 42,
