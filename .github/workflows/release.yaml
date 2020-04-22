@@ -1,9 +1,14 @@
-name: Test and Release
-on: [push]
-
+name: Release
+on:
+  push:
+    branches:
+      - master
+      - beta
+      - alpha
+        
 jobs:
-  test-and-release:
-    name: Run tests and release
+  release:
+    name: Release
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout
@@ -16,12 +21,8 @@ jobs:
         run: npm install -g yarn
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-#      - name: Run tests
-#        run: npm test
-      - name: Build
-        run: yarn build
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm run semantic-release
+        run: npx semantic-release
