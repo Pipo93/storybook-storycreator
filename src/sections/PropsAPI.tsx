@@ -99,7 +99,7 @@ const PropRow: FunctionComponent<Prop> = ({
                 {name}
             </TableCell>
             <TableCell deprecated={deprecated} width={200}>
-                {propType}
+                {Array.isArray(propType) ? propType.join(', ') : propType}
             </TableCell>
             <TableCell deprecated={deprecated} width={150}>
                 {defaultValue}
