@@ -4,7 +4,7 @@ import { ContentLayout } from '../layouts'
 
 type Prop = {
     name: string
-    type: string
+    type: string | string[]
     description?: string
     defaultValue?: string | boolean | number
     deprecated?: boolean
@@ -13,7 +13,7 @@ type Prop = {
 
 type PropsMap = {
     [propName: string]: {
-        type: string
+        type: string | string[]
         description?: string
         defaultValue?: string | boolean | number
         deprecated?: boolean
