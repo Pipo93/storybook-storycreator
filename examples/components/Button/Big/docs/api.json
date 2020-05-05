@@ -8,16 +8,22 @@
     "optionalProps": {
         "onPress": {
             "description": "callback function triggered when button is pressed",
-            "type": "function"
+            "type": "function",
+            "signature": {
+                "parameters": [],
+                "returns": [
+                    "void"
+                ]
+            }
         },
         "type": {
             "description": "The type refers to the backgroundColor of the button",
             "defaultValue": "surface",
             "enum": [
                 "black",
-                "white",
+                "green",
                 "red",
-                "green"
+                "white"
             ],
             "type": "string"
         }

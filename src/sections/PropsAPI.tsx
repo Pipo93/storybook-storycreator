@@ -2,22 +2,43 @@ import React, { FunctionComponent, ReactElement } from 'react'
 import { View, Text, ScrollView } from 'react-native'
 import { ContentLayout } from '../layouts'
 
+type Value = string | boolean | number
+
+type PropType = string | string[]
+
+type Parameter = {
+    type: PropType
+    name: string
+    defaultValue?: Value
+}
+
+type Signature = {
+    parameters: Parameter[]
+    returns?: PropType
+}
+
 type Prop = {
     name: string
-    type: string | string[]
+    type: PropType
     description?: string
-    defaultValue?: string | boolean | number
+    defaultValue?: Value
+    signature?: Signature
     deprecated?: boolean
-    propTypeEnum?: string[] | number[] | boolean[]
+    propTypeEnum?: (string | number | boolean)[]
+    properties?: PropsMap
+    required?: string[]
 }
 
 type PropsMap = {
     [propName: string]: {
-        type: string | string[]
+        type: PropType
         description?: string
         defaultValue?: string | boolean | number
+        signature?: Signature
         deprecated?: boolean
         enum?: string[] | number[] | boolean[]
+        properties?: PropsMap
+        required?: string[]
     }
 }
 
@@ -62,11 +83,48 @@ const TableCell: FunctionComponent<{ width: number; deprecated?: boolean }> = ({
                 width,
             }}
         >
-            <Text style={deprecated ? { color: 'red' } : undefined} numberOfLines={0}>
-                {children}
-            </Text>
+            {typeof children === 'string' ? (
+                <Text style={deprecated ? { color: 'red' } : undefined} numberOfLines={0}>
+                    {children}
+                </Text>
+            ) : (
+                children
+            )}
         </View>
     )
+}
+
+const getPropTypeString = (propType: PropType): string => {
+    return Array.isArray(propType) ? propType.join(' | ') : propType
+}
+
+type PropTypeObject = {
+    [propName: string]:
+        | {
+              type: string | string[]
+              defaultValue?: Value
+              required?: true
+          }
+        | PropTypeObject
+}
+
+const getPropTypesObject = (properties: PropsMap, required: string[] = []): PropTypeObject => {
+    const obj: PropTypeObject = {}
+    Object.keys(properties).forEach(propName => {
+        const { type, properties: props, required: requiredProps, defaultValue } = properties[
+            propName
+        ]
+        if (type === 'object' && props) {
+            obj[propName] = getPropTypesObject(props, requiredProps)
+        } else {
+            obj[propName] = {
+                type: getPropTypeString(type),
+                defaultValue,
+                required: required.includes(propName) || undefined,
+            }
+        }
+    })
+    return obj
 }
 
 const PropRow: FunctionComponent<Prop> = ({
@@ -76,15 +134,78 @@ const PropRow: FunctionComponent<Prop> = ({
     description,
     propTypeEnum,
     deprecated,
+    signature,
+    properties,
+    required,
 }): ReactElement => {
-    let propType = type
+    let propType: string | ReactElement = getPropTypeString(type)
     if (propTypeEnum) {
-        // TODO: pass this to PropRow and highlight enum values by background color for example
-        propType = 'oneOf: \n'
-        propTypeEnum.forEach((t: string | boolean | number): void => {
-            const propTypePrinted = type === 'string' ? `'${t}'` : t
-            propType += `${propTypePrinted}, `
+        const typesEnum: string[] = propTypeEnum.map(t => {
+            return typeof t === 'string' ? `'${t}'` : `${t}`
         })
+        propType = (
+            <View>
+                <View>
+                    <Text>enum</Text>
+                </View>
+                <View style={{ marginTop: 16, height: 1, backgroundColor: '#e5e5e5' }} />
+                <View style={{ marginTop: 16 }}>
+                    <Text style={{ color: '#777777' }}>{getPropTypeString(typesEnum)}</Text>
+                </View>
+            </View>
+        )
+    }
+    if (propType === 'function' && signature) {
+        propType = (
+            <View>
+                <View>
+                    <Text>{propType}</Text>
+                </View>
+                <View style={{ marginTop: 16, height: 1, backgroundColor: '#e5e5e5' }} />
+                <View style={{ marginTop: 16 }}>
+                    {signature.parameters.length ? (
+                        <Text style={{ color: '#777777', textDecorationLine: 'underline' }}>
+                            Parameters:
+                        </Text>
+                    ) : null}
+                    <View>
+                        {signature.parameters.map(p => (
+                            <Text style={{ color: '#777777', marginTop: 8 }} key={p.name}>{`${
+                                p.name
+                            }: ${getPropTypeString(p.type)}${
+                                p.defaultValue ? `(default = ${p.defaultValue})` : ''
+                            }`}</Text>
+                        ))}
+                    </View>
+                </View>
+                <View style={{ marginTop: 16 }}>
+                    <Text style={{ color: '#777777', textDecorationLine: 'underline' }}>
+                        Return type:
+                    </Text>
+                    <View style={{ marginTop: 8 }}>
+                        <Text style={{ color: '#777777' }}>
+                            {signature.returns ? getPropTypeString(signature.returns) : 'void'}
+                        </Text>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
+    if (propType === 'object' && properties) {
+        propType = (
+            <View>
+                <View>
+                    <Text>object</Text>
+                </View>
+                <View style={{ marginTop: 16, height: 1, backgroundColor: '#e5e5e5' }} />
+                <View style={{ marginTop: 16 }}>
+                    <Text style={{ color: '#777777' }}>
+                        {JSON.stringify(getPropTypesObject(properties, required), undefined, 4)}
+                    </Text>
+                </View>
+            </View>
+        )
     }
 
     return (
@@ -99,7 +220,7 @@ const PropRow: FunctionComponent<Prop> = ({
                 {name}
             </TableCell>
             <TableCell deprecated={deprecated} width={200}>
-                {Array.isArray(propType) ? propType.join(', ') : propType}
+                {propType}
             </TableCell>
             <TableCell deprecated={deprecated} width={150}>
                 {defaultValue}
@@ -118,7 +239,9 @@ const PropsAPI: FunctionComponent<{ schema: PropsObject }> = ({ schema }): React
             defaultValue,
             description,
             enum: propTypeEnum,
+            signature,
             deprecated,
+            properties,
         } = schema.requiredProps[propName]
 
         return (
@@ -130,6 +253,8 @@ const PropsAPI: FunctionComponent<{ schema: PropsObject }> = ({ schema }): React
                 description={description}
                 propTypeEnum={propTypeEnum}
                 deprecated={deprecated}
+                signature={signature}
+                properties={properties}
             />
         )
     })
@@ -140,7 +265,9 @@ const PropsAPI: FunctionComponent<{ schema: PropsObject }> = ({ schema }): React
             defaultValue,
             description,
             enum: propTypeEnum,
+            signature,
             deprecated,
+            properties,
         } = schema.optionalProps[propName]
 
         return (
@@ -152,6 +279,8 @@ const PropsAPI: FunctionComponent<{ schema: PropsObject }> = ({ schema }): React
                 description={description}
                 propTypeEnum={propTypeEnum}
                 deprecated={deprecated}
+                signature={signature}
+                properties={properties}
             />
         )
     })
