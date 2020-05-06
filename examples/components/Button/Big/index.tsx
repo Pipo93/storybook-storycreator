@@ -9,6 +9,11 @@ export type BigButtonProps = {
      * callback function triggered when button is pressed
      *
      * @TJS-type function
+     *
+     * @signature {
+     *    "parameters": [],
+     *    "returns": ["void"]
+     * }
      */
     onPress?: () => void
 } & ButtonTypes
