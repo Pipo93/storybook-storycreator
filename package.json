@@ -18,6 +18,7 @@
     "build:types": "tsc --emitDeclarationOnly",
     "build:js": "babel src --out-dir lib --ignore \"/**/*.spec.tsx,/**/*.spec.ts\" --extensions \".ts,.tsx\" --source-maps inline",
     "build:jsonschema": "ts-node jsonSchemaGenerator.ts",
+    "build:storybook": "build-storybook -c ./storybook/web",
     "storybook": "start-storybook -c ./storybook/web",
     "prestorybook": "rnstl",
     "start": "node node_modules/react-native/local-cli/cli.js start",
