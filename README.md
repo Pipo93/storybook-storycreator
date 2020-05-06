@@ -7,5 +7,4 @@ Creating nice looking storybook documentations for react native as well as react
 `yarn add @pipo93/storybook-storycreator`
 
 ## Linting
-
 `yarn lint`
