@@ -52,6 +52,7 @@ export type ComponentStoryConfig<P> = {
     propsSchema?: PropsObject
     tabs: BasicTabConfig[]
     examples?: ExampleConfig<P>[]
+    examplesHeadline?: string
 }
 
 type ComponentStory<P> = BasicStoryConfig & {
@@ -82,6 +83,7 @@ const createStorySections = <P,>({
     propsSchema,
     examples,
     createIssueLink,
+    examplesHeadline,
 }: ComponentStoryConfig<P>): StorySections => {
     const headerConfig: HeaderConfig<P> = {
         sourceLink,
@@ -116,7 +118,14 @@ const createStorySections = <P,>({
             }
 
             if (s === 'EXAMPLES' && examples) {
-                return <Examples key={i} examples={examples} component={component} />
+                return (
+                    <Examples
+                        key={i}
+                        examples={examples}
+                        headline={examplesHeadline}
+                        component={component}
+                    />
+                )
             }
 
             return null

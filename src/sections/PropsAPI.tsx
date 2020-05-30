@@ -13,7 +13,7 @@ type Parameter = {
 }
 
 type Signature = {
-    parameters: Parameter[]
+    parameters?: Parameter[]
     returns?: PropType
 }
 
@@ -39,6 +39,7 @@ type PropsMap = {
         enum?: string[] | number[] | boolean[]
         properties?: PropsMap
         required?: string[]
+        deprecationNotes?: string
     }
 }
 
@@ -104,6 +105,8 @@ type PropTypeObject = {
               type: string | string[]
               defaultValue?: Value
               required?: true
+              deprecated?: boolean
+              deprecationNotes?: string
           }
         | PropTypeObject
 }
@@ -111,9 +114,14 @@ type PropTypeObject = {
 const getPropTypesObject = (properties: PropsMap, required: string[] = []): PropTypeObject => {
     const obj: PropTypeObject = {}
     Object.keys(properties).forEach(propName => {
-        const { type, properties: props, required: requiredProps, defaultValue } = properties[
-            propName
-        ]
+        const {
+            type,
+            properties: props,
+            required: requiredProps,
+            defaultValue,
+            deprecated,
+            deprecationNotes,
+        } = properties[propName]
         if (type === 'object' && props) {
             obj[propName] = getPropTypesObject(props, requiredProps)
         } else {
@@ -121,6 +129,8 @@ const getPropTypesObject = (properties: PropsMap, required: string[] = []): Prop
                 type: getPropTypeString(type),
                 defaultValue,
                 required: required.includes(propName) || undefined,
+                deprecated,
+                deprecationNotes: deprecated ? deprecationNotes : undefined,
             }
         }
     })
@@ -162,22 +172,22 @@ const PropRow: FunctionComponent<Prop> = ({
                     <Text>{propType}</Text>
                 </View>
                 <View style={{ marginTop: 16, height: 1, backgroundColor: '#e5e5e5' }} />
-                <View style={{ marginTop: 16 }}>
-                    {signature.parameters.length ? (
+                {signature.parameters?.length ? (
+                    <View style={{ marginTop: 16 }}>
                         <Text style={{ color: '#777777', textDecorationLine: 'underline' }}>
                             Parameters:
                         </Text>
-                    ) : null}
-                    <View>
-                        {signature.parameters.map(p => (
-                            <Text style={{ color: '#777777', marginTop: 8 }} key={p.name}>{`${
-                                p.name
-                            }: ${getPropTypeString(p.type)}${
-                                p.defaultValue ? `(default = ${p.defaultValue})` : ''
-                            }`}</Text>
-                        ))}
+                        <View>
+                            {signature.parameters.map(p => (
+                                <Text style={{ color: '#777777', marginTop: 8 }} key={p.name}>{`${
+                                    p.name
+                                }: ${getPropTypeString(p.type)}${
+                                    p.defaultValue ? `(default = ${p.defaultValue})` : ''
+                                }`}</Text>
+                            ))}
+                        </View>
                     </View>
-                </View>
+                ) : null}
                 <View style={{ marginTop: 16 }}>
                     <Text style={{ color: '#777777', textDecorationLine: 'underline' }}>
                         Return type:
@@ -223,7 +233,7 @@ const PropRow: FunctionComponent<Prop> = ({
                 {propType}
             </TableCell>
             <TableCell deprecated={deprecated} width={150}>
-                {defaultValue}
+                {`${defaultValue ?? ''}`}
             </TableCell>
             <TableCell deprecated={deprecated} width={300}>
                 {deprecated ? `Deprecated: ${description}` : description}
@@ -287,46 +297,54 @@ const PropsAPI: FunctionComponent<{ schema: PropsObject }> = ({ schema }): React
 
     return (
         <ContentLayout style={{ marginBottom: 32 }}>
-            <View style={{ marginBottom: 16 }}>
-                <Text style={{ fontSize: 21 }}>Required Props</Text>
-            </View>
-            <ScrollView horizontal style={{ flexGrow: 1 }}>
-                <View>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            borderLeftWidth: 1,
-                            borderColor: '#0000001F',
-                        }}
-                    >
-                        <HeaderCell width={200}>Name</HeaderCell>
-                        <HeaderCell width={200}>Type</HeaderCell>
-                        <HeaderCell width={150}>Default Value</HeaderCell>
-                        <HeaderCell width={300}>Description</HeaderCell>
+            {requiredPropsRows.length ? (
+                <>
+                    <View style={{ marginBottom: 16 }}>
+                        <Text style={{ fontSize: 21 }}>Required Props</Text>
                     </View>
-                    {requiredPropsRows}
-                </View>
-            </ScrollView>
-            <View style={{ marginBottom: 16, marginTop: 32 }}>
-                <Text style={{ fontSize: 21 }}>Optional Props</Text>
-            </View>
-            <ScrollView horizontal style={{ flexGrow: 1 }}>
-                <View>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            borderLeftWidth: 1,
-                            borderColor: '#0000001F',
-                        }}
-                    >
-                        <HeaderCell width={200}>Name</HeaderCell>
-                        <HeaderCell width={200}>Type</HeaderCell>
-                        <HeaderCell width={150}>Default Value</HeaderCell>
-                        <HeaderCell width={300}>Description</HeaderCell>
+                    <ScrollView horizontal style={{ flexGrow: 1 }}>
+                        <View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    borderLeftWidth: 1,
+                                    borderColor: '#0000001F',
+                                }}
+                            >
+                                <HeaderCell width={200}>Name</HeaderCell>
+                                <HeaderCell width={200}>Type</HeaderCell>
+                                <HeaderCell width={150}>Default Value</HeaderCell>
+                                <HeaderCell width={300}>Description</HeaderCell>
+                            </View>
+                            {requiredPropsRows}
+                        </View>
+                    </ScrollView>
+                </>
+            ) : null}
+            {optionalPropsRows.length ? (
+                <>
+                    <View style={{ marginBottom: 16, marginTop: 32 }}>
+                        <Text style={{ fontSize: 21 }}>Optional Props</Text>
                     </View>
-                    {optionalPropsRows}
-                </View>
-            </ScrollView>
+                    <ScrollView horizontal style={{ flexGrow: 1 }}>
+                        <View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    borderLeftWidth: 1,
+                                    borderColor: '#0000001F',
+                                }}
+                            >
+                                <HeaderCell width={200}>Name</HeaderCell>
+                                <HeaderCell width={200}>Type</HeaderCell>
+                                <HeaderCell width={150}>Default Value</HeaderCell>
+                                <HeaderCell width={300}>Description</HeaderCell>
+                            </View>
+                            {optionalPropsRows}
+                        </View>
+                    </ScrollView>
+                </>
+            ) : null}
         </ContentLayout>
     )
 }

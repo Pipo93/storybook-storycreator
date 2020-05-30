@@ -1,0 +1,38 @@
+{
+    "requiredProps": {
+        "booleanValue": {
+            "description": "required boolean prop",
+            "type": "boolean"
+        },
+        "stringValue": {
+            "description": "required string prop",
+            "type": "string"
+        },
+        "numberValue": {
+            "description": "required number prop",
+            "type": "number"
+        }
+    },
+    "optionalProps": {
+        "optionalBoolean": {
+            "description": "optional boolean which defaults to true",
+            "defaultValue": true,
+            "type": "boolean"
+        },
+        "optionalString": {
+            "description": "optional string which defaults to 'placeholder'",
+            "defaultValue": "placeholder",
+            "type": "string"
+        },
+        "optionalNumber": {
+            "description": "optional number which defaults to 42",
+            "defaultValue": 42,
+            "type": "number"
+        },
+        "deprecatedNumber": {
+            "description": "use optionalNumber instead",
+            "deprecated": true,
+            "type": "number"
+        }
+    }
+}

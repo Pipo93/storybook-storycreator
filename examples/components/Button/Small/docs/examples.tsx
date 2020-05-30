@@ -1,9 +1,6 @@
 import type { ExampleConfig } from '../../../../../src'
 import { SmallButtonProps } from '..'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const backgroundRed = require('../../../../../assets/storyBackgrounds/checkerboard_tile_red.png')
-
 export const examples: ExampleConfig<SmallButtonProps>[] = [
     {
         title: 'Type',
@@ -39,29 +36,5 @@ export const examples: ExampleConfig<SmallButtonProps>[] = [
             },
         ],
         variantsDirection: 'row',
-    },
-    {
-        title: 'Custom checkerboard background image',
-        description: 'Examples could be used with custom background image',
-        variants: [
-            {
-                children: 'Small Button',
-                type: 'black',
-            },
-        ],
-        variantsDirection: 'column',
-        variantsBackground: { type: 'IMAGE', src: backgroundRed },
-    },
-    {
-        title: 'Custom background color',
-        description: 'Examples could be used with custom background color',
-        variants: [
-            {
-                children: 'Small Button',
-                type: 'white',
-            },
-        ],
-        variantsDirection: 'column',
-        variantsBackground: { type: 'COLOR', color: 'blue' },
     },
 ]

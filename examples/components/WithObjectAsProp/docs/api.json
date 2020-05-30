@@ -1,0 +1,41 @@
+{
+    "requiredProps": {
+        "simpleObject": {
+            "description": "simpleObject is an object with simple data types like booleans, strings and numbers",
+            "type": "object",
+            "properties": {
+                "booleanValue": {
+                    "type": "boolean"
+                },
+                "optionalBoolean": {
+                    "description": "optional boolean which defaults to true",
+                    "defaultValue": true,
+                    "type": "boolean"
+                },
+                "stringValue": {
+                    "type": "string"
+                },
+                "optionalString": {
+                    "type": "string"
+                },
+                "numberValue": {
+                    "type": "number"
+                },
+                "optionalNumber": {
+                    "type": "number"
+                },
+                "deprecatedNumber": {
+                    "deprecated": true,
+                    "deprecationNotes": "use optionalNumber instead",
+                    "type": "number"
+                }
+            },
+            "required": [
+                "booleanValue",
+                "numberValue",
+                "stringValue"
+            ]
+        }
+    },
+    "optionalProps": {}
+}
