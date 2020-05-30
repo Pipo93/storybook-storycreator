@@ -76,39 +76,44 @@ const Example = <P,>({
                     {description ? <Text style={{ marginTop: 16 }}>{description}</Text> : null}
                 </View>
 
-                <VariantBackground variantsBackground={variantsBackground}>
-                    <ScrollView
-                        horizontal
-                        onLayout={({ nativeEvent }): void => {
-                            if (
-                                nativeEvent.layout.width &&
-                                nativeEvent.layout.width !== variantsContainerWidth
-                            ) {
-                                setContainerWidth(nativeEvent.layout.width)
-                            }
-                        }}
-                        style={{ flexGrow: 1, flexDirection: variantsDirection }}
-                        showsHorizontalScrollIndicator={false}
-                    >
-                        <View style={{ flexDirection: variantsDirection, flexGrow: 1 }}>
-                            {variants.map((props, index) => (
-                                <View
-                                    key={index}
-                                    style={{
-                                        paddingLeft:
-                                            index !== 0 && variantsDirection === 'row' ? 8 : 0,
-                                        paddingTop:
-                                            index !== 0 && variantsDirection === 'column' ? 8 : 0,
-                                        flexGrow: variantsDirection === 'column' ? 1 : undefined,
-                                        maxWidth: variantsContainerWidth,
-                                    }}
-                                >
-                                    <Component {...props} />
-                                </View>
-                            ))}
-                        </View>
-                    </ScrollView>
-                </VariantBackground>
+                {variants.length ? (
+                    <VariantBackground variantsBackground={variantsBackground}>
+                        <ScrollView
+                            horizontal
+                            onLayout={({ nativeEvent }): void => {
+                                if (
+                                    nativeEvent.layout.width &&
+                                    nativeEvent.layout.width !== variantsContainerWidth
+                                ) {
+                                    setContainerWidth(nativeEvent.layout.width)
+                                }
+                            }}
+                            style={{ flexGrow: 1, flexDirection: variantsDirection }}
+                            showsHorizontalScrollIndicator={false}
+                        >
+                            <View style={{ flexDirection: variantsDirection, flexGrow: 1 }}>
+                                {variants.map((props, index) => (
+                                    <View
+                                        key={index}
+                                        style={{
+                                            paddingLeft:
+                                                index !== 0 && variantsDirection === 'row' ? 8 : 0,
+                                            paddingTop:
+                                                index !== 0 && variantsDirection === 'column'
+                                                    ? 8
+                                                    : 0,
+                                            flexGrow:
+                                                variantsDirection === 'column' ? 1 : undefined,
+                                            maxWidth: variantsContainerWidth,
+                                        }}
+                                    >
+                                        <Component {...props} />
+                                    </View>
+                                ))}
+                            </View>
+                        </ScrollView>
+                    </VariantBackground>
+                ) : null}
             </View>
         </ContentLayout>
     )

@@ -1,0 +1,45 @@
+{
+    "requiredProps": {
+        "onPressVoid": {
+            "description": "callback function with return type void and no input parameters",
+            "type": "function",
+            "signature": {
+                "parameters": [],
+                "returns": [
+                    "void"
+                ]
+            }
+        },
+        "onPressVoidWithParams": {
+            "description": "callback function with return type void and two input parameters",
+            "type": "function",
+            "signature": {
+                "parameters": [
+                    {
+                        "name": "msg",
+                        "type": "string"
+                    },
+                    {
+                        "name": "isValid",
+                        "type": "boolean"
+                    }
+                ],
+                "returns": [
+                    "void"
+                ]
+            }
+        },
+        "onMultipleReturnTypes": {
+            "description": "callback function with multiple return types",
+            "type": "function",
+            "signature": {
+                "returns": [
+                    "number",
+                    "string",
+                    "{ test: 42 }"
+                ]
+            }
+        }
+    },
+    "optionalProps": {}
+}

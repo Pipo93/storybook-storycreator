@@ -15,7 +15,7 @@ const getJsonSchema = (file: string, type: string): TJS.Definition | null => {
     const settings: TJS.PartialArgs = {
         required: true,
         include: [file],
-        validationKeywords: ['defaultValue', 'deprecated', 'signature'],
+        validationKeywords: ['defaultValue', 'deprecated', 'deprecationNotes', 'signature'],
     }
 
     const program = TJS.getProgramFromFiles([resolve(file)], tsConfig.compilerOptions)
