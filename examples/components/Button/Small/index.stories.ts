@@ -13,7 +13,18 @@ const smallButtonConfig: ComponentStoryConfig<SmallButtonProps> = {
             sections: ['IMPORT_EXAMPLE', 'DIVIDER', 'EXAMPLES'],
         },
         { type: 'API_DOCUMENTATION', sections: ['PROPS_API'] },
-        { type: 'PLAYGROUND', sections: [] },
+        {
+            type: 'PLAYGROUND',
+            sections: [
+                {
+                    type: 'PLAYGROUND',
+                    initialProps: {
+                        type: 'black',
+                        children: 'Button',
+                    },
+                },
+            ],
+        },
     ],
     title: 'Small Button',
     sourceLink:
