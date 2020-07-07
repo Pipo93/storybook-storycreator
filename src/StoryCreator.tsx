@@ -144,6 +144,7 @@ const createStorySections = <P,>({
             if (typeof s !== 'string' && s.type === 'PLAYGROUND' && propsSchema) {
                 return (
                     <Playground
+                        key={i}
                         Component={component}
                         initialProps={s.initialProps}
                         callbackPropPrinted={s.callbackPropPrinted}

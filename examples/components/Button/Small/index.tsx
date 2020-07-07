@@ -15,7 +15,7 @@ export type SmallButtonProps = {
 
 const SmallButton: FunctionComponent<SmallButtonProps> = ({
     children,
-    type = 'surface',
+    type = 'black',
     onPress,
 }): ReactElement => {
     return (

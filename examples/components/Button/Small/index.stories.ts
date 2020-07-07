@@ -21,6 +21,10 @@ const smallButtonConfig: ComponentStoryConfig<SmallButtonProps> = {
                     initialProps: {
                         type: 'black',
                         children: 'Button',
+                        onPress: (): void => alert('onPress triggered'),
+                    },
+                    callbackPropPrinted: {
+                        onPress: "(): void => alert('onPress triggered')",
                     },
                 },
             ],

@@ -1,5 +1,5 @@
 import React, { ComponentClass, FunctionComponent, ReactElement, ReactNode, useState } from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Platform } from 'react-native'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { coy } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { ContentLayout } from '../layouts'
@@ -62,7 +62,7 @@ const Playground = <P,>({
 }: PlaygroundProps<P>): ReactElement => {
     const [playgroundProps, setPlaygroundProps] = useState(initialProps)
     const [showBasicProps, setShowBasicProps] = useState(true)
-    const [showCallbackProps, setShowCallbackProps] = useState(false)
+    const [showCallbackProps, setShowCallbackProps] = useState(true)
 
     let basicPropsCount = 0
     let callbackPropsCount = 0
@@ -79,6 +79,8 @@ const Playground = <P,>({
         // TODO: check other solutions to prevent as any type-cast
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const currentValue = playgroundProps[propName as keyof P] as any
+        const isRequired = !!schema.requiredProps[propName]
+
         if (propName === 'children') {
             children = currentValue
         } else if (type === 'function' && callbackPropPrinted[propName]) {
@@ -92,7 +94,7 @@ const Playground = <P,>({
 
             basicPropsCount++
             basicPropsRows.push(
-                <PropRow even={basicPropsCount % 2 === 0} propName={propName}>
+                <PropRow key={propName} even={basicPropsCount % 2 === 0} propName={propName}>
                     <View>
                         {typesEnum.map((value, index) => (
                             <View key={index} style={{ flexDirection: 'row', height: 30 }}>
@@ -110,76 +112,115 @@ const Playground = <P,>({
                                 </View>
                             </View>
                         ))}
+                        {isRequired ? null : (
+                            <TouchableOpacity
+                                onPress={(): void => {
+                                    setPlaygroundProps({
+                                        ...playgroundProps,
+                                        [propName]: undefined,
+                                    })
+                                }}
+                            >
+                                <Text>Clear</Text>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 </PropRow>
             )
-        }
+        } else {
+            if (type === 'boolean') {
+                basicPropsCount++
+                basicPropsRows.push(
+                    <PropRow key={propName} even={basicPropsCount % 2 === 0} propName={propName}>
+                        <Checkbox
+                            checked={!!currentValue}
+                            onPress={(): void =>
+                                setPlaygroundProps({
+                                    ...playgroundProps,
+                                    [propName]: !currentValue,
+                                })
+                            }
+                        />
+                    </PropRow>
+                )
+            }
 
-        if (type === 'boolean') {
-            basicPropsCount++
-            basicPropsRows.push(
-                <PropRow even={basicPropsCount % 2 === 0} propName={propName}>
-                    <Checkbox
-                        checked={!!currentValue}
-                        onPress={(): void =>
-                            setPlaygroundProps({
-                                ...playgroundProps,
-                                [propName]: !currentValue,
-                            })
-                        }
-                    />
-                </PropRow>
-            )
-        }
+            if (type === 'string') {
+                basicPropsCount++
+                basicPropsRows.push(
+                    <PropRow key={propName} even={basicPropsCount % 2 === 0} propName={propName}>
+                        <TextInput
+                            value={currentValue}
+                            onChangeText={(text): void => {
+                                setPlaygroundProps({ ...playgroundProps, [propName]: text })
+                            }}
+                        />
+                    </PropRow>
+                )
+            }
 
-        if (type === 'string') {
-            basicPropsCount++
-            basicPropsRows.push(
-                <PropRow even={basicPropsCount % 2 === 0} propName={propName}>
-                    <TextInput
-                        value={currentValue}
-                        onChangeText={(text): void => {
-                            setPlaygroundProps({ ...playgroundProps, [propName]: text })
-                        }}
-                    />
-                </PropRow>
-            )
-        }
+            if (type === 'number') {
+                basicPropsCount++
+                basicPropsRows.push(
+                    <PropRow key={propName} even={basicPropsCount % 2 === 0} propName={propName}>
+                        <TextInput
+                            keyboardType="numeric"
+                            value={currentValue}
+                            onChangeText={(text): void => {
+                                setPlaygroundProps({
+                                    ...playgroundProps,
+                                    [propName]: parseFloat(text),
+                                })
+                            }}
+                        />
+                    </PropRow>
+                )
+            }
 
-        if (type === 'number') {
-            basicPropsCount++
-            basicPropsRows.push(
-                <PropRow even={basicPropsCount % 2 === 0} propName={propName}>
-                    <TextInput
-                        keyboardType="numeric"
-                        value={currentValue}
-                        onChangeText={(text): void => {
-                            setPlaygroundProps({ ...playgroundProps, [propName]: parseFloat(text) })
-                        }}
-                    />
-                </PropRow>
-            )
-        }
+            if (type === 'function') {
+                callbackPropsCount++
+                callbackPropsRows.push(
+                    <PropRow key={propName} even={callbackPropsCount % 2 === 0} propName={propName}>
+                        <View>
+                            {!isRequired && (
+                                <View
+                                    style={{
+                                        flexDirection: 'row',
+                                        justifyContent: 'space-between',
+                                        marginBottom: 8,
+                                    }}
+                                >
+                                    <Text style={{ marginRight: 8 }}>Active?</Text>
+                                    <Checkbox
+                                        checked={!!currentValue}
+                                        onPress={(): void =>
+                                            setPlaygroundProps({
+                                                ...playgroundProps,
+                                                [propName]: !!currentValue
+                                                    ? undefined
+                                                    : initialProps[propName as keyof P],
+                                            })
+                                        }
+                                    />
+                                </View>
+                            )}
+                            <Text>Try in preview</Text>
+                        </View>
+                    </PropRow>
+                )
+            }
 
-        if (type === 'function') {
-            callbackPropsCount++
-            callbackPropsRows.push(
-                <PropRow even={callbackPropsCount % 2 === 0} propName={propName}>
-                    <Text>Try in preview</Text>
-                </PropRow>
-            )
+            if (type === 'object') {
+                // TODO: add support for objects
+                basicPropsCount++
+                basicPropsRows.push(
+                    <PropRow key={propName} even={basicPropsCount % 2 === 0} propName={propName}>
+                        <Text>Type {type} is not yet supported</Text>
+                    </PropRow>
+                )
+            }
+            // TODO: check if other types are possible
         }
-
-        if (type === 'object') {
-            // TODO: add support for objects
-            basicPropsCount++
-            basicPropsRows.push(
-                <PropRow even={basicPropsCount % 2 === 0} propName={propName}>
-                    <Text>Type {type} is not yet supported</Text>
-                </PropRow>
-            )
-        }
-        // TODO: check if other types are possible
     })
 
     const codeSnipped = generateCodeSnipped(componentName, snippedProps, children)
@@ -223,16 +264,26 @@ const Playground = <P,>({
                 <Component {...playgroundProps} />
             </View>
 
+            <View style={{ height: 1, backgroundColor: '#C1E4FE', marginVertical: 16 }} />
+
             <SectionHeadline>Code</SectionHeadline>
-            <SyntaxHighlighter
-                customStyle={{ backgroundColor: '#f5f5f5', padding: 16, overflow: 'scroll' }}
-                language="typescript"
-                style={coy}
-                highlighter="prism"
-                wrapLines
-            >
-                {codeSnipped}
-            </SyntaxHighlighter>
+            {Platform.OS === 'web' ? (
+                <SyntaxHighlighter
+                    customStyle={{ backgroundColor: '#f5f5f5', padding: 16, overflow: 'scroll' }}
+                    language="typescript"
+                    style={coy}
+                    highlighter="prism"
+                    wrapLines
+                >
+                    {codeSnipped}
+                </SyntaxHighlighter>
+            ) : (
+                <View style={{ marginVertical: 32 }}>
+                    <Text style={{ color: '#FF8080' }}>
+                        Syntax highlighting is not yet available on native side
+                    </Text>
+                </View>
+            )}
             <CopyToClipBoard textToCopy={codeSnipped} />
         </ContentLayout>
     )
