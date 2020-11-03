@@ -71,7 +71,7 @@ const Example = <P,>({
     return (
         <ContentLayout style={{ marginBottom: 32 }}>
             <View style={{ flexDirection: 'column', width: '100%' }}>
-                <View style={{ flex: 1, paddingVertical: 16 }}>
+                <View style={{ paddingVertical: 16 }}>
                     <Text style={{ fontSize: 18 }}>{title}</Text>
                     {description ? <Text style={{ marginTop: 16 }}>{description}</Text> : null}
                 </View>
