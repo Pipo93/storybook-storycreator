@@ -6,13 +6,35 @@ import WithFunctionAsProp, { Props } from '.'
 const config: ComponentStoryConfig<Props> = {
     createIssueLink: 'https://github.com/Pipo93/storybook-storycreator/issues/new',
     componentImportPath: '@pipo93/react-styleguide',
-    tabs: [{ type: 'API_DOCUMENTATION', sections: ['PROPS_API'] }],
+    tabs: [
+        { type: 'API_DOCUMENTATION', sections: ['PROPS_API'] },
+        {
+            type: 'PLAYGROUND',
+            sections: [
+                {
+                    type: 'PLAYGROUND',
+                    initialProps: {
+                        onPressVoid: (): void => alert('onPressVoid clicked'),
+                        onPressVoidWithParams: (message, isValid): void =>
+                            alert(`${message}: ${isValid}`),
+                        onMultipleReturnTypes: (): number => 42,
+                    },
+                    callbackPropPrinted: {
+                        onPressVoid: "() => alert('onPressVoid clicked')",
+                        onPressVoidWithParams:
+                            '(message, isValid): void => alert(`${message}: ${isValid}`)',
+                        onMultipleReturnTypes: '(): number => 42',
+                    },
+                },
+            ],
+        },
+    ],
     title: 'With functions as prop',
     sourceLink:
         'https://github.com/Pipo93/storybook-storycreator/blob/master/examples/components/WithFunctionAsProp/index.tsx',
     component: WithFunctionAsProp,
     propsSchema,
-    componentExportName: '',
+    componentExportName: 'WithFunctionAsProp',
 }
 
 createStory({

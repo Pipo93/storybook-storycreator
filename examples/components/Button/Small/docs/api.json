@@ -12,7 +12,7 @@
         },
         "type": {
             "description": "The type refers to the backgroundColor of the button",
-            "defaultValue": "surface",
+            "defaultValue": "black",
             "enum": [
                 "black",
                 "white",

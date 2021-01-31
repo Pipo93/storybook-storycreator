@@ -8,14 +8,27 @@ import { TabType } from './sections/Tabs'
 import PropsAPI, { PropsObject } from './sections/PropsAPI'
 import Examples from './sections/Examples'
 import storiesOf from './utils/storiesOf'
+import Playground from './sections/Playground'
 
 type StorySections = (ReactElement | null)[]
 
-type Section = 'HEADER' | 'IMPORT_EXAMPLE' | 'DIVIDER' | 'PROPS_API' | 'EXAMPLES'
+type PlaygroundSection<P> = {
+    type: 'PLAYGROUND'
+    initialProps: P
+    callbackPropPrinted?: { [key: string]: string }
+}
 
-type BasicTabConfig = {
+type Section<P> =
+    | 'HEADER'
+    | 'IMPORT_EXAMPLE'
+    | 'DIVIDER'
+    | 'PROPS_API'
+    | 'EXAMPLES'
+    | PlaygroundSection<P>
+
+type BasicTabConfig<P> = {
     type: TabType
-    sections: Section[]
+    sections: Section<P>[]
 }
 
 export type VariantsBackground =
@@ -50,7 +63,7 @@ export type ComponentStoryConfig<P> = {
     componentImportPath: string
     componentExportName: string
     propsSchema?: PropsObject
-    tabs: BasicTabConfig[]
+    tabs: BasicTabConfig<P>[]
     examples?: ExampleConfig<P>[]
     examplesHeadline?: string
 }
@@ -124,6 +137,19 @@ const createStorySections = <P,>({
                         examples={examples}
                         headline={examplesHeadline}
                         component={component}
+                    />
+                )
+            }
+
+            if (typeof s !== 'string' && s.type === 'PLAYGROUND' && propsSchema) {
+                return (
+                    <Playground
+                        key={i}
+                        Component={component}
+                        initialProps={s.initialProps}
+                        callbackPropPrinted={s.callbackPropPrinted}
+                        schema={propsSchema}
+                        componentName={componentExportName}
                     />
                 )
             }
